@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "artiferrium",
+  "version": "${version}",
+  "name": "artiferrium",
+  "description": "Artiferrium is one of the main server agents we provide to help sync and manage server artifacts",
+  "authors": [
+    "VI Software"
+  ],
+  "contact": {
+    "homepage": "https://visoftware.dev"
+  },
+  "license": "AGPL-3.0",
+  "icon": "assets/artiferrium/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "dev.visoftware.artiferrium.fabric.ArtiferriumFabric"
+    ],
+    "client": [
+      "dev.visoftware.artiferrium.fabric.client.ArtiferriumFabricClient"
+    ]
+  },
+  "mixins": [
+    "artiferrium.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.14",
+    "minecraft": "~1.20.1",
+    "java": ">=17",
+    "architectury": ">=9.2.14",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
