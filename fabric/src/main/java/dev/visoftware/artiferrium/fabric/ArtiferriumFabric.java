@@ -24,7 +24,6 @@ public class ArtiferriumFabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        // Create config directory and load config
         Path configDir = FabricLoader.getInstance().getConfigDir().resolve(CONFIG_FOLDER);
         try {
             Files.createDirectories(configDir);
@@ -34,18 +33,14 @@ public class ArtiferriumFabric implements ModInitializer {
 
         loadConfig();
 
-        // Initialize the common mod
         Artiferrium.init();
 
-        // Register server lifecycle handlers
         ServerLifecycleEvents.SERVER_STARTING.register(server -> {
             currentServer = server;
-            // Register our player count provider
             HeartbeatService.setPlayerCountProvider(() ->
                 currentServer != null ? currentServer.getPlayerList().getPlayers().size() : 0
             );
 
-            // Initialize services now that we have the server
             Artiferrium.initializeServices();
         });
 
@@ -54,7 +49,7 @@ public class ArtiferriumFabric implements ModInitializer {
             Artiferrium.shutdown();
         });
 
-        // Register player join handler for private server access check
+        // join handler for private server access check
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             if (Artiferrium.isPrivateServer()) {
                 ServerPlayer player = handler.getPlayer();

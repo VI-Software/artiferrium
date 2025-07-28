@@ -36,7 +36,6 @@ public class ArtifferiumForge {
 
         loadConfig();
 
-        // Initialize the mod
         Artiferrium.init();
 
         MinecraftForge.EVENT_BUS.register(this);
@@ -45,12 +44,10 @@ public class ArtifferiumForge {
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
         currentServer = event.getServer();
-        // Register our player count provider
         HeartbeatService.setPlayerCountProvider(() ->
             currentServer != null ? currentServer.getPlayerList().getPlayers().size() : 0
         );
 
-        // Initialize services now that we have the server
         Artiferrium.initializeServices();
     }
 

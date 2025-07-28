@@ -54,23 +54,19 @@ public final class Artiferrium {
 
     public static void init() {
         try {
-            // Create config directory if it doesn't exist
             Path configFolder = Platform.getConfigFolder().resolve(CONFIG_FOLDER);
             Files.createDirectories(configFolder);
 
-            // Load config
             Path configPath = configFolder.resolve(CONFIG_FILE);
             Config.get().load(configPath);
 
-            // Set up logging level based on config
             configureLogging();
 
-            // Only perform server-specific initialization if we're on a server
             if ("SERVER".equals(Platform.getEnvironment().name())) {
                 authenticateAndInitialize();
             }
 
-            // Register commands (they will only work on server anyway)
+            // Register commands [TODO: Slash autocomplet dosnt work yet, Need to investigate]
             dev.visoftware.artiferrium.command.ArtifferiumCommands.register();
         } catch (IOException e) {
             LOGGER.error("Failed to load config", e);
@@ -83,7 +79,6 @@ public final class Artiferrium {
             (org.apache.logging.log4j.core.LoggerContext) org.apache.logging.log4j.LogManager.getContext(false);
         org.apache.logging.log4j.core.config.Configuration config = ctx.getConfiguration();
 
-        // Set Artiferrium logger level based on debug setting
         String loggerLevel = Config.get().isDebug() ? "DEBUG" : "INFO";
         org.apache.logging.log4j.Level level = org.apache.logging.log4j.Level.toLevel(loggerLevel);
 
@@ -107,7 +102,7 @@ public final class Artiferrium {
         LOGGER.error("╚═══════════════════════════════════════════════════════════════════════════╝");
 
         try {
-            Thread.sleep(2000); // Give time for the message to be seen
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -126,7 +121,6 @@ public final class Artiferrium {
                     shutdownWithError("Failed to obtain valid session credentials\nPlease check your server key and try again.");
                 }
 
-                // Store server data and display welcome message
                 serverData = new ServerData(response);
                 isPrivateServer = serverData.isPrivate();
 
@@ -149,7 +143,6 @@ public final class Artiferrium {
                 LOGGER.info("║ Type: {}", String.format("%-58s ║", serverData.isPrivate() ? "Private" : "Public"));
                 LOGGER.info("╚════════════════════════════════════════════════════════════════╝");
 
-                // Get session credentials from response
                 String sessionKey = response.get("sessionKey").getAsString();
                 String sessionId = response.get("sessionId").getAsString();
 
@@ -157,10 +150,8 @@ public final class Artiferrium {
                     shutdownWithError("Failed to obtain session credentials from server response");
                 }
 
-                // Initialize services with session credentials
                 heartbeatService = new HeartbeatService(sessionKey, sessionId);
 
-                // Initialize allowlist service if server is private
                 if (isPrivateServer) {
                     if (isOfflineMode()) {
                         LOGGER.warn("╔═══════════════════════════════════���════════════════════════════╗");
@@ -183,7 +174,6 @@ public final class Artiferrium {
                     );
                 }
 
-                // Start the heartbeat scheduler
                 heartbeatService.startHeartbeatScheduler(0);
 
             } catch (Exception e) {
@@ -203,7 +193,6 @@ public final class Artiferrium {
 
         LOGGER.info("Starting Artiferrium services...");
 
-        // Start heartbeat service if we have session credentials
         if (heartbeatService != null) {
             heartbeatService.startHeartbeatScheduler(0);
         }

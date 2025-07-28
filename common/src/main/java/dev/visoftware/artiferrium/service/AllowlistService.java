@@ -163,7 +163,15 @@ public class AllowlistService {
                 allowedUuids.clear();
 
                 JsonObject cache = gson.fromJson(reader, JsonObject.class);
+                if (cache == null) {
+                    LOGGER.warn("Allowlist cache file is empty or malformed. No users loaded.");
+                    return;
+                }
                 JsonArray users = cache.getAsJsonArray("users");
+                if (users == null) {
+                    LOGGER.warn("No 'users' array found in allowlist cache file.");
+                    return;
+                }
 
                 for (JsonElement element : users) {
                     JsonObject user = element.getAsJsonObject();
